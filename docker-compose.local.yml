@@ -1,0 +1,39 @@
+version: '3.2'
+services:
+  web:
+    image: nginx:1.21.6-alpine
+    restart: always
+    links:
+      - php
+    ports:
+      - "9988:80"
+    volumes:
+      - ./docker/local/config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./:/var/www/html:rw
+    networks:
+      - internal
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/local/dockerfiles/dockerfile_php
+    restart: always
+    volumes:
+      - ./:/var/www/html:rw
+    environment:
+      XDEBUG_CONFIG: remote_host=172.17.0.1
+    networks:
+      - internal
+  db:
+    image: mysql:8.0.28
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "3336:3306"
+    volumes:
+      - ./docker/data/mysql:/var/lib/mysql
+    networks:
+      - internal
+networks:
+  internal:

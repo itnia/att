@@ -1,0 +1,13 @@
+.pagination nav {
+    width: 100%;
+}
+
+.search-bar {
+    width: 25%;
+}
+
+@media (max-width: 480px) {
+    .search-bar {
+        width: 100%;
+    }
+}
